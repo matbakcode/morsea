@@ -1,6 +1,6 @@
 export const CONFIG = {
-  timeDistance: 1000,
-  timeDashPressable: 400,
+  timeDistance: 1200,
+  timeDashPressable: 300,
   displayMorseDot: "•",
   displayMorseDash: "—",
 };

@@ -1,58 +1,83 @@
 import { MdOutlineOfflineBolt } from "react-icons/md";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CONFIG } from "../contans/config.ts";
-import { isKeyAndIsSpace } from "../utils/isKeyAndIsSpace.ts";
+import { isKeySpace } from "../utils/isKeySpace.ts";
 import { SignalTypes } from "../types.ts";
 import { Stages } from "../enums.ts";
 
 interface ActionButtonProps {
   stage: Stages;
   addCurrentSignalSymbol: (signalSymbol: SignalTypes) => void;
-  setStage: (stage: Stages) => void,
+  setStage: (stage: Stages) => void;
 }
 
 function ActionController({
   stage,
   addCurrentSignalSymbol,
-                            setStage,
+  setStage,
 }: ActionButtonProps) {
-  const [keyDownTime, setKeyDownTime] = useState<Date>(new Date());
-  const [keyUpTime, setKeyUpTime] = useState<Date>(new Date());
-  let pressed = false;
+  const keyDownTimestamp = useRef<Date>(new Date());
+  const keyUpTimestamp = useRef<Date>(new Date());
+  const pressed = useRef<boolean>(false);
+  const [pressedTime, setPressTime] = useState(0);
 
-  function handleActionDown(e?: KeyboardEvent) {
-    if ((e && !isKeyAndIsSpace(e)) || pressed) {
-      return;
+  const handleActionDown = useCallback(() => {
+    if (!pressed.current) {
+      pressed.current = true;
+      keyDownTimestamp.current = new Date();
+      setStage(Stages.ACTIVE);
     }
-    setStage(Stages.ACTIVE);
-    setKeyDownTime(new Date());
-    pressed = true;
-  }
+  }, [pressed, setStage]);
 
-  function handleActionUp(e?: KeyboardEvent) {
-    if (e && !isKeyAndIsSpace(e)) {
-      return;
+  const handleActionUp = useCallback(() => {
+    if (pressed.current) {
+      pressed.current = false;
+      keyUpTimestamp.current = new Date();
+      const pressTime =
+        keyUpTimestamp.current.getTime() - keyDownTimestamp.current.getTime();
+      setPressTime(pressTime);
     }
-    setKeyUpTime(new Date());
-    pressed = false;
-  }
+  }, [pressed]);
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (isKeySpace(e)) {
+      e.preventDefault();
+      handleActionDown();
+    }
+  };
+
+  const handleKeyUp = (e: KeyboardEvent) => {
+    if (isKeySpace(e)) {
+      e.preventDefault();
+      handleActionUp();
+    }
+  };
+
+  const handleTouchUp = () => {
+    handleActionUp();
+  };
+
+  const handleTouchDown = () => {
+    handleActionDown();
+  };
 
   useEffect(() => {
-    const time = keyUpTime.getTime() - keyDownTime.getTime();
-    if (time > 0) {
+    if (pressedTime > 0) {
       const signalSymbol =
-        time < CONFIG.timeDashPressable ? SignalTypes.DOT : SignalTypes.DASH;
+        pressedTime < CONFIG.timeDashPressable
+          ? SignalTypes.DOT
+          : SignalTypes.DASH;
       addCurrentSignalSymbol(signalSymbol);
     }
-  }, [keyUpTime]);
+  }, [pressedTime]);
 
   useEffect(() => {
-    document.addEventListener("keydown", handleActionDown, true);
-    document.addEventListener("keyup", handleActionUp, true);
+    document.addEventListener("keydown", handleKeyDown, true);
+    document.addEventListener("keyup", handleKeyUp, true);
 
     return () => {
-      document.removeEventListener("keydown", handleActionDown);
-      document.removeEventListener("keyup", handleActionUp);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keyup", handleKeyUp);
     };
   }, []);
 
@@ -61,10 +86,13 @@ function ActionController({
       <div className={"relative w-32 h-32"}>
         <button
           type={"button"}
-          onTouchStart={() => handleActionDown()}
-          onTouchEnd={() => handleActionUp()}
-          onMouseDown={() => handleActionDown()}
-          onMouseUp={() => handleActionUp()}
+          onTouchStart={handleTouchDown}
+          onTouchEnd={handleTouchUp}
+          onMouseDown={handleActionDown}
+          onMouseUp={handleActionUp}
+          onContextMenu={(e) => {
+            e.preventDefault();
+          }}
           className={
             "relative left-4 top-4 z-40 w-24 h-24 rounded-full flex items-center justify-center bg-slate-100 drop-shadow text-4xl text-slate-300 hover:text-slate-800 transition-colors"
           }

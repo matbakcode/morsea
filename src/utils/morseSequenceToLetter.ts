@@ -6,7 +6,6 @@ export function morseSequenceToLetter(
   sequence: Array<SignalTypes>,
 ): string | null {
   let letter = null;
-  console.log("morseSequenceToLetter")
   CHARS.forEach((char) => {
     if (arraysEqual<SignalTypes>(sequence, char.morseSymbols)) {
       letter = char.char;

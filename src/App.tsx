@@ -8,7 +8,7 @@ function App() {
       <div className={"container xl mx-auto"}>
         <Wrapper>
           <Header />
-          <Reader />
+            <Reader />
         </Wrapper>
       </div>
     </main>
