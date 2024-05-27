@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* next-theme */
+:root {
+  --background: white;
+  --foreground: black;
+}
+[data-theme="dark"] {
+  --background: black;
+  --foreground: white;
+}
+
+body {
+  min-height: 100vh;
+}
+
+.action-button {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 60px;
+  background-color: red;
+
+  &__btn {
+    width: 90px;
+    height: 90px;
+    border-radius: 60px;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+  }
+}
