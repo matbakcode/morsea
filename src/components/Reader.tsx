@@ -1,17 +1,14 @@
-import {useCallback, useEffect, useRef, useState} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { SignalTypes } from "../types.ts";
-import { signalToSymbolTransform } from "../utils/signalToSymbolTransform.ts";
 import ActionController from "./ActionController.tsx";
 import Alphabet from "./Alphabet.tsx";
 import Button from "./ui/Button.tsx";
 import { MdOutlineBackspace, MdOutlineCleaningServices } from "react-icons/md";
-import { decodeSignalToText } from "../utils/decodeSignalToText.ts";
-import { morseSequenceToLetter } from "../utils/morseSequenceToLetter.ts";
 import { CONFIG } from "../contans/config.ts";
 import { Stages } from "../enums.ts";
 import { CHARS } from "../contans/chars.ts";
-import { arraysEqual } from "../utils/arrayEqual.ts";
 import { IoArrowDownSharp } from "react-icons/io5";
+import {arraysEqual, decodeSignalToText, morseSequenceToLetter, signalToSymbolTransform} from "../utils";
 
 function Reader() {
   const [messageSignal, setMessageSignal] = useState<Array<Array<SignalTypes>>>(

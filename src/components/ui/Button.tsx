@@ -1,9 +1,7 @@
-import { ReactNode } from "react";
+import React from "react";
 
-interface ButtonProps {
-  children: ReactNode;
-  onClick?: () => void;
-}
+interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {}
+
 
 function Button({ children, onClick }: ButtonProps) {
   return (

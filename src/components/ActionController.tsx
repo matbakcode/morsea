@@ -1,7 +1,7 @@
 import { MdOutlineOfflineBolt } from "react-icons/md";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CONFIG } from "../contans/config.ts";
-import { isKeySpace } from "../utils/isKeySpace.ts";
+import { isKeySpace } from "../utils";
 import { SignalTypes } from "../types.ts";
 import { Stages } from "../enums.ts";
 
@@ -72,6 +72,7 @@ function ActionController({
   }, [pressedTime]);
 
   useEffect(() => {
+    // All listeners (key, touch, mouse) we can move to separated hook
     document.addEventListener("keydown", handleKeyDown, true);
     document.addEventListener("keyup", handleKeyUp, true);
 

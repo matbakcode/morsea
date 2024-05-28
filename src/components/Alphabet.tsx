@@ -1,7 +1,7 @@
 import { CHARS } from "../contans/chars.ts";
 import { SignalTypes } from "../types.ts";
-import { signalToSymbolTransform } from "../utils/signalToSymbolTransform.ts";
-import {memo} from "react";
+import { signalToSymbolTransform } from "../utils";
+import { memo } from "react";
 
 function AlphabetComponent() {
   function displaySymbols(signal: Array<SignalTypes>) {
@@ -29,5 +29,5 @@ function AlphabetComponent() {
   );
 }
 
-const Alphabet = memo(AlphabetComponent)
+const Alphabet = memo(AlphabetComponent);
 export default Alphabet;
